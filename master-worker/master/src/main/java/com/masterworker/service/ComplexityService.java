@@ -137,7 +137,7 @@ public class ComplexityService {
     private String getResponse(String fileURI, String workerURI) throws UnsupportedEncodingException, ResourceAccessException{
         String response;
         try {
-            response = restTemplate.getForObject(workerURI + "{file}", String.class, URLEncoder.encode(fileURI, StandardCharsets.UTF_8.toString()));
+            response = restTemplate.getForObject(workerURI + "file/{file}", String.class, URLEncoder.encode(fileURI, StandardCharsets.UTF_8.toString()));
         } catch (ResourceAccessException e) {
             log.error(e.getMessage());
             throw e;

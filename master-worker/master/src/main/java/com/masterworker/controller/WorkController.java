@@ -18,7 +18,7 @@ public class WorkController {
     }
 
     @GetMapping("/complexity")
-    public WorkResponse getComplexity(@RequestParam("repo-name") String repoName) {
+    public WorkResponse getComplexity(@RequestParam("repo-name") String repoName) throws Exception{
         return complexityService.getComplexity(repoName);
     }
 }
