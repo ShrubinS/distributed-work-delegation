@@ -43,7 +43,7 @@ public class ComplexityService {
         blockingQueue.addAll(fileURIs);
 
         Double complexityValue = 0d;
-        List<CompletableFuture<Double>> all = new ArrayList<>();
+        List<CompletableFuture<OptionalDouble>> all = new ArrayList<>();
 
         while (!fileURIs.isEmpty()) {
 
@@ -93,23 +93,28 @@ public class ComplexityService {
             all.add(allDone.thenApply(future -> future
                     .stream()
                     .mapToDouble(Double::valueOf)
-                    .sum()
+                    .average()
             ));
 
         }
 
-        CompletableFuture<List<Double>> allDone = sequence(all);
+        CompletableFuture<List<OptionalDouble>> allDone = sequence(all);
 
-        CompletableFuture<Double> complexityFuture = allDone.thenApply(future -> future
+        CompletableFuture<OptionalDouble> complexityFuture = allDone.thenApply(future -> future
                 .stream()
-                .mapToDouble(Double::valueOf)
-                .sum()
+                .mapToDouble(val -> {
+                    if( val.isPresent() ){
+                        return val.getAsDouble();
+                    }
+                    return 0;
+                })
+                .average()
         );
 
         Double complexity;
 
         try {
-            complexity = complexityFuture.get();
+            complexity = complexityFuture.get().getAsDouble();
         } catch (ExecutionException e) {
             e.printStackTrace();
             throw e;
